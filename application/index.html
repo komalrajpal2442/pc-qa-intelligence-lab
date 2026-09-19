@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>P&C Insurance Portal</title>
+    <style>
+    .error {
+        color: red;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+</style>
+</head>
+
+<body>
+
+    <h1>P&C Insurance Portal</h1>
+
+    <h2>New Commercial Property Submission</h2>
+
+    <form id="submissionForm" onsubmit="createSubmission(event)">
+
+       <label for="insuredName">Insured Name</label>
+<input
+    type="text"
+    id="insuredName"
+    name="insuredName"
+>
+<div id="insuredNameError" class="error"></div>
+
+        <br><br>
+<label for="propertyAddress">Property Address</label>
+<input
+    type="text"
+    id="propertyAddress"
+    name="propertyAddress"
+>
+<div id="propertyAddressError" class="error"></div>
+
+        <br><br>
+
+        <label for="propertyType">Property Type</label>
+
+        <select id="propertyType" name="propertyType">
+
+            <option value="">Select Property Type</option>
+            <option value="commercial">Commercial Property</option>
+            <option value="warehouse">Warehouse</option>
+            <option value="office">Office Building</option>
+
+        </select>
+        <div id="propertyTypeError" class="error"></div>
+
+        <br><br>
+
+        <label for="yearBuilt">Year Built</label>
+
+        <input
+            type="number"
+            id="yearBuilt"
+            name="yearBuilt"
+        >
+        <div id="yearBuiltError" class="error"></div>
+
+        <br><br>
+
+        <button type="submit">
+            Create Submission
+        </button>
+
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+
+   function createSubmission(event) {
+
+    event.preventDefault();
+
+    const insuredName =
+        document.getElementById('insuredName').value.trim();
+
+    const propertyAddress =
+        document.getElementById('propertyAddress').value.trim();
+
+    const propertyType =
+        document.getElementById('propertyType').value;
+
+    const yearBuilt =
+        document.getElementById('yearBuilt').value;
+
+    const currentYear = new Date().getFullYear();
+
+    // Clear previous errors
+    document.getElementById('insuredNameError').textContent = '';
+    document.getElementById('propertyAddressError').textContent = '';
+    document.getElementById('propertyTypeError').textContent = '';
+    document.getElementById('yearBuiltError').textContent = '';
+
+    document.getElementById('result').textContent = '';
+
+    let hasError = false;
+
+    // Insured Name validation
+    if (insuredName === '') {
+        document.getElementById('insuredNameError').textContent =
+            'Insured Name is required.';
+        hasError = true;
+    }
+
+    // Property Address validation
+    if (propertyAddress === '') {
+        document.getElementById('propertyAddressError').textContent =
+            'Property Address is required.';
+        hasError = true;
+    }
+
+    // Property Type validation
+    if (propertyType === '') {
+        document.getElementById('propertyTypeError').textContent =
+            'Property Type is required.';
+        hasError = true;
+    }
+
+    // Year Built validation
+    if (yearBuilt === '') {
+        document.getElementById('yearBuiltError').textContent =
+            'Year Built is required.';
+        hasError = true;
+    } else if (yearBuilt > currentYear) {
+        document.getElementById('yearBuiltError').textContent =
+            'Year Built cannot be in the future.';
+        hasError = true;
+    }
+
+    // Stop if validation failed
+    if (hasError) {
+        return;
+    }
+
+    // Underwriting referral
+    const propertyAge = currentYear - yearBuilt;
+
+    if (propertyAge > 50) {
+        document.getElementById('result').textContent =
+            'Underwriting Referral Required - Property is over 50 years old.';
+        return;
+    }
+
+    // Successful submission
+    const submissionNumber =
+        'SUB-' + Math.floor(10000 + Math.random() * 90000);
+
+    document.getElementById('result').textContent =
+        'Submission created successfully: ' + submissionNumber;
+}
+</script>
+</body>
+
+</html>
