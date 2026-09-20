@@ -1,0 +1,9 @@
+{
+  "testName": "API - Future Year Built",
+  "status": "failed",
+  "errorMessage": "Expected response status 400, received 201",
+  "expected": "API should reject a future Year Built",
+  "actual": "API created the submission successfully",
+  "endpoint": "POST /api/submissions",
+  "businessRule": "Year Built cannot be in the future"
+}
