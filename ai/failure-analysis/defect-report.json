@@ -1,0 +1,12 @@
+{
+  "testName": "API - Future Year Built",
+  "aiAnalysis": {
+    "failureCategory": "Business rule validation failure",
+    "severity": "High",
+    "likelyRootCause": "The POST /api/submissions endpoint is not enforcing the rule that Year Built cannot be in the future, or the validation is bypassed for this request.",
+    "businessImpact": "The API can create submissions containing invalid future Year Built values, which may compromise submission data integrity and affect downstream insurance processing or underwriting decisions.",
+    "recommendedQAInvestigation": "Verify the request payload used by the test, confirm the Year Built field reaches the API unchanged, and inspect server-side validation, date comparison, and persistence behavior for future values. Also verify that a valid error response is returned when the rule is violated.",
+    "recommendedTestAction": "Raise a defect for the unexpected 201 response, retain the test as a regression case, and add boundary coverage for past, current, and future Year Built values, including date and timezone-related cases where applicable.",
+    "defectSummary": "POST /api/submissions accepts and creates a submission with a future Year Built value instead of rejecting the request with HTTP 400 as required."
+  }
+}

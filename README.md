@@ -80,8 +80,13 @@ Insured Information
 
 ## Project Structure
 
-```text
+```
 pc-qa-intelligence-lab
+├── ai/
+│   └── failure-analysis/
+│       ├── analyze-failure.js
+│       ├── failure-input.json
+│       └── defect-report.json
 ├── api/
 ├── application/
 ├── pages/
@@ -91,3 +96,33 @@ pc-qa-intelligence-lab
 ├── package.json
 ├── playwright.config.js
 └── README.md
+
+```
+## AI-Powered QA Intelligence
+
+The project includes an AI-powered failure analysis workflow using the OpenAI API.
+
+### AI Workflow
+
+Playwright/API Failure
+→ Failure Input
+→ OpenAI Analysis
+→ Structured QA Analysis
+→ Defect Report
+
+### AI Capabilities
+
+The AI analyzer generates:
+
+- Failure category
+- Severity
+- Likely root cause
+- Business impact
+- Recommended QA investigation
+- Recommended test action
+- Defect summary
+
+### Run AI Analysis
+
+```bash
+npm run test:ai

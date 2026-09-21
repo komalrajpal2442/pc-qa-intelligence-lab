@@ -1,4 +1,10 @@
+require('dotenv').config();
+
 const fs = require('fs');
+const OpenAI = require('openai');
+const client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 const failureData = JSON.parse(
     fs.readFileSync(
@@ -7,25 +13,76 @@ const failureData = JSON.parse(
     )
 );
 
-function analyzeFailure(data) {
+async function analyzeFailure(data) {
 
-    return {
-        testName: data.testName,
-        failureCategory: 'Business Rule Validation',
-        likelyCause:
-            'The API accepted a Year Built value that violates the future-year business rule.',
-        affectedArea: 'Property Submission API',
-        businessImpact:
-            'A submission could be created with invalid property information.',
-        suggestedInvestigation:
-            'Verify the API validation logic for future Year Built values.',
-        recommendedQAAction:
-            'Add or update a negative API test for future Year Built.'
-    };
+   const response = await client.responses.create({
+    model: 'gpt-5.6-luna',
+    input: `
+You are a senior QA engineer specializing in P&C insurance applications.
+
+Analyze this failed automated test:
+
+Test Name: ${data.testName}
+Error: ${data.errorMessage}
+Expected: ${data.expected}
+Actual: ${data.actual}
+Endpoint: ${data.endpoint}
+Business Rule: ${data.businessRule}
+
+Return ONLY valid JSON using exactly these fields.
+Do not invent facts that are not supported by the test failure.
+Severity should reflect the potential business impact of the failure.
+
+{
+  "failureCategory": "string",
+  "severity": "Low | Medium | High | Critical",
+  "likelyRootCause": "string",
+  "businessImpact": "string",
+  "recommendedQAInvestigation": "string",
+  "recommendedTestAction": "string",
+  "defectSummary": "string"
 }
 
-const analysis = analyzeFailure(failureData);
+Do not use Markdown.
+Do not include explanations outside the JSON.
+`});
 
-console.log(
-    JSON.stringify(analysis, null, 2)
-);
+    const aiAnalysis = JSON.parse(response.output_text);
+
+return {
+    testName: data.testName,
+    aiAnalysis: aiAnalysis
+};
+};
+
+
+analyzeFailure(failureData).then((analysis) => {
+
+   analyzeFailure(failureData)
+    .then((analysis) => {
+
+        const reportPath =
+            './ai/failure-analysis/defect-report.json';
+
+        fs.writeFileSync(
+            reportPath,
+            JSON.stringify(analysis, null, 2)
+        );
+
+        console.log(
+            JSON.stringify(analysis, null, 2)
+        );
+
+        console.log(
+            `\nDefect report created: ${reportPath}`
+        );
+
+    })
+    .catch((error) => {
+
+        console.error('AI Failure Analysis Error:');
+        console.error(error.message);
+
+    });
+
+});
